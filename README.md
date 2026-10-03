@@ -77,6 +77,8 @@ python -m vuelos --dry-run
 `--dry-run` really searches, but prints the messages instead of sending them.
 
 ## Common tweaks (`config.yaml`)
+- **A weekend one of you can't make it**: add a line to `blocked_dates`, e.g. `- { from: 2026-12-04, to: 2026-12-06, who: Clau }`. Any trip touching those dates is skipped.
+- **Names in the messages**: `people.madrid` and `people.paris` (Telegram messages are in French).
 - **Another destination**: add a line to `meetup.destinations` (`city` = the city's IATA code).
 - **Custom limit for one meetup**: `max_total: 180` on that line.
 - **Other weekends** (e.g. Thursday → Sunday): add `[3, 6]` to `weekend_patterns`.

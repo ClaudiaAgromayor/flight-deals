@@ -1,7 +1,8 @@
 from datetime import date, timedelta
 
-DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+# Telegram messages are in French
+DAYS = ["lun.", "mar.", "mer.", "jeu.", "ven.", "sam.", "dim."]
+MONTHS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."]
 
 
 def weekend_pairs(patterns, weeks_ahead, today=None):
@@ -17,6 +18,15 @@ def weekend_pairs(patterns, weeks_ahead, today=None):
                 pairs.append((d, d + timedelta(days=gap)))
         d += timedelta(days=1)
     return sorted(pairs)
+
+
+def _as_date(value):
+    return value if isinstance(value, date) else date.fromisoformat(str(value))
+
+
+def is_blocked(depart, ret, blocked):
+    """True if the trip overlaps any blocked range (e.g. Fri 16 -> Mon 19 overlaps 16-18)."""
+    return any(_as_date(b["from"]) <= ret and depart <= _as_date(b["to"]) for b in blocked or [])
 
 
 def fmt(d: date) -> str:

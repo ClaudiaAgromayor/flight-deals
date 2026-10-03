@@ -9,7 +9,7 @@ One run, step by step:
 """
 from datetime import date, timedelta
 
-from .dates import weekend_pairs
+from .dates import is_blocked, weekend_pairs
 from .models import CITIES, Deal, ProviderError
 from .providers import GoogleFlights, SerpApi, Travelpayouts
 from .state import record_history, usual_price
@@ -32,7 +32,8 @@ class Engine:
         self.budget = prov["google"].get("max_verifications", 40)
         self.tolerance = 1 + prov["travelpayouts"].get("tolerance", 0.15)
 
-        self.pairs = weekend_pairs(cfg["weekend_patterns"], cfg["weeks_ahead"])
+        self.pairs = [p for p in weekend_pairs(cfg["weekend_patterns"], cfg["weeks_ahead"])
+                      if not is_blocked(*p, cfg.get("blocked_dates"))]
         self.pair_set = set(self.pairs)
         self.paris = set(cfg["paris_airports"])
         self.offers = {}      # (origin, dest, depart, return) -> most reliable / cheapest offer

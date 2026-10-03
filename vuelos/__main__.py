@@ -34,17 +34,19 @@ def main():
             telegram.send(sec["TELEGRAM_BOT_TOKEN"], sec["TELEGRAM_CHAT_ID"], text)
 
     if args.test_telegram:
-        notify("👋 Hi! The flight deal finder can now message you.")
+        notify("👋 Coucou ! Le chercheur de bons plans vols peut maintenant vous écrire.")
         return
 
     state = load_state()
     engine = Engine(cfg, state, use_google=not args.no_google)
     deals = engine.run()
+    # Pick the best deals first (🔥 and cheapest), then show them by date, soonest first
     new = select_new(deals, state, cfg["alerts"]["realert_drop"])[: cfg["alerts"]["max_per_message"]]
+    new.sort(key=lambda d: (d.depart, d.ret, d.total))
     print(f"· {len(new)} new deals to send")
 
     if new:
-        for msg in telegram.build_messages(new):
+        for msg in telegram.build_messages(new, cfg["people"]):
             notify(msg)
         if not args.dry_run:
             mark_alerted(new, state)
@@ -52,7 +54,7 @@ def main():
     # If we couldn't check anything, say so (at most once a day) so it never fails silently
     today = date.today().isoformat()
     if not engine.offers and engine.errors and state.get("last_error_notice") != today:
-        notify("⚠️ <b>The flight finder couldn't fetch any prices</b>\n"
+        notify("⚠️ <b>Le chercheur de vols n'a pu récupérer aucun prix</b>\n"
                + "\n".join(f"• {e}" for e in dict.fromkeys(engine.errors)))
         if not args.dry_run:
             state["last_error_notice"] = today
