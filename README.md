@@ -1,68 +1,67 @@
-# ✈️ Buscador de chollos de vuelos (Madrid ⇄ París y quedadas)
+# ✈️ Flight deal finder (Madrid ⇄ Paris and meetups)
 
-Mira precios 4 veces al día en GitHub Actions (gratis, sin servidor) y te escribe por Telegram cuando encuentra:
+Checks prices 4 times a day on GitHub Actions (free, no server) and messages you on Telegram when it finds:
 
-- 🗼 **Visita a París**: MAD → CDG/ORY, ida y vuelta ≤ 150 € por persona
-- 🏠 **Visita a España**: CDG/ORY → Madrid, Valencia, Zaragoza o Barcelona (a las tres últimas vas tú en tren 🚄), ida y vuelta ≤ 150 € por persona
-- 💑 **Quedada**: Madrid → X **y** París → X el mismo fin de semana, con los dos billetes sumando ≤ 200 €
+- 🗼 **Visit to Paris**: MAD → CDG/ORY, return ≤ €150 per person
+- 🏠 **Visit to Spain**: CDG/ORY → Madrid, Valencia, Zaragoza or Barcelona (you take the train 🚄 to the last three), return ≤ €150 per person
+- 💑 **Meetup**: Madrid → X **and** Paris → X on the same weekend, with both tickets adding up to ≤ €200
 
-Siempre **vuelos directos**, **viernes o sábado → domingo o lunes**, y **nunca Beauvais (BVA) ni Vatry (XCR)**, ni en ida ni en vuelta, en ninguna ruta.
-Todo esto se cambia en [`config.yaml`](config.yaml).
+Always **direct flights**, **Friday or Saturday → Sunday or Monday**, and **never Beauvais (BVA) or Vatry (XCR)**, neither outbound nor return, on any route.
+All of this can be changed in [`config.yaml`](config.yaml).
 
-## Cómo funciona
+## How it works
 
 ```
-GitHub Actions (4 veces al día)
+GitHub Actions (4 times a day)
  │
- ├─ 1. RADAR · Travelpayouts ──── barre todas las rutas × 4 meses (precios en caché, gratis)
- ├─ 2. ESCANEO · Google Flights ─ Madrid ⇄ CDG/ORY, cada fin de semana de las próximas 8 semanas
- ├─ 3. COMPROBACIÓN ───────────── todo lo que pinta barato se vuelve a mirar en tiempo real
- │      Google Flights  ──si Google nos bloquea──▶  SerpApi (plan B, 200 búsquedas/mes)
- ├─ 4. DECISIÓN ───────────────── ¿por debajo del tope? ¿muy por debajo de lo habitual? (🔥)
- ├─ 5. FILTRO ANTISPAM ────────── no repite avisos salvo que el precio baje otro 10 %
- ├─ 6. TELEGRAM ───────────────── un mensaje con todos los chollos nuevos y enlaces
- └─ 7. MEMORIA ────────────────── guarda historial y avisos en data/state.json (commit automático)
+ ├─ 1. RADAR · Travelpayouts ──── covers every route × 4 months (cached prices, free)
+ ├─ 2. SCAN · Google Flights ──── Madrid ⇄ CDG/ORY, every weekend for the next 8 weeks
+ ├─ 3. CHECK ──────────────────── anything that looks cheap is re-checked live
+ │      Google Flights  ──if Google blocks us──▶  SerpApi (plan B, 200 searches/month)
+ ├─ 4. DECIDE ─────────────────── below the limit? far below the usual price? (🔥)
+ ├─ 5. ANTI-SPAM ──────────────── no repeated alerts unless the price drops another 10 %
+ ├─ 6. TELEGRAM ───────────────── one message with all new deals and links
+ └─ 7. MEMORY ─────────────────── saves history and alerts in data/state.json (automatic commit)
 ```
 
-| Fuente | Papel | Coste | Punto débil |
+| Source | Role | Cost | Weak spot |
 |---|---|---|---|
-| **Travelpayouts** | Radar: ve meses enteros de golpe | Gratis | Precios de hace horas o días |
-| **Google Flights** (`fast-flights`) | Precio real y escaneo de la ruta principal | Gratis | Es scraping: Google puede bloquearlo |
-| **SerpApi** | Plan B cuando Google falla | Gratis hasta ~250 al mes | Pocas búsquedas |
+| **Travelpayouts** | Radar: sees whole months at once | Free | Prices from hours or days ago |
+| **Google Flights** (`fast-flights`) | Live price and scan of the main route | Free | It is scraping: Google may block it |
+| **SerpApi** | Plan B when Google fails | Free up to ~250/month | Few searches |
 
-En las quedadas, si el radar solo tiene precio para uno de los dos lados, el sistema estima el otro con lo más barato que ha visto y, si la suma promete, busca los dos lados en tiempo real.
+For meetups, if the radar only has a price for one of the two sides, the system estimates the other with the cheapest it has seen and, if the sum looks promising, searches both sides live.
 
-## Puesta en marcha (unos 20 minutos)
+## Setup (about 20 minutes)
 
-### 1. Bot de Telegram
-1. En Telegram, abre **@BotFather** → `/newbot` → ponle un nombre → copia el **token**.
-2. Escríbele cualquier cosa a tu bot nuevo (o crea un grupo con tu novio, mete al bot y escribe allí, y os llega a los dos).
-3. Para obtener el chat id:
+### 1. Telegram bot
+1. In Telegram, open **@BotFather** → `/newbot` → give it a name → copy the **token**.
+2. Create a group with your partner, add the bot (search for its exact `@username`) and send `/start@your_bot_username` in the group.
+3. Put the token in a `.env` file (see below) and get the chat id:
    ```bash
-   python -m vuelos.telegram_setup TU_TOKEN
+   python -m vuelos.telegram_setup
    ```
-   (o abre `https://api.telegram.org/botTU_TOKEN/getUpdates` en el navegador y busca `"chat":{"id":...}`).
 
 ### 2. Travelpayouts (radar)
-Regístrate gratis en <https://www.travelpayouts.com> → **Tools → API** → copia el **API token**.
+Sign up for free at <https://www.travelpayouts.com> → **Tools → API** → copy the **API token**.
 
 ### 3. SerpApi (plan B)
-Regístrate gratis en <https://serpapi.com> → **Dashboard → API key**.
+Sign up for free at <https://serpapi.com> → **Dashboard → API key**.
 
 ### 4. GitHub
-1. Crea un repositorio (puede ser **privado**) y sube esta carpeta.
-2. **Settings → Secrets and variables → Actions → New repository secret** y crea:
+1. Push this folder to your repository (it can be **private**).
+2. **Settings → Secrets and variables → Actions → New repository secret** and create:
    `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TRAVELPAYOUTS_TOKEN`, `SERPAPI_KEY`
-3. **Actions** → "Buscar chollos de vuelos" → **Run workflow** para probarlo ya.
+3. **Actions** → "Find flight deals" → **Run workflow** to try it right away.
 
-A partir de ahí se ejecuta solo. Si el radar o SerpApi no tienen clave, el sistema funciona con lo que tenga.
+From then on it runs by itself. If the radar or SerpApi have no key, the system works with whatever it has.
 
-## Probar en tu ordenador
+## Running it on your computer
 
 ```bash
 pip install -r requirements.txt
 ```
-Crea un archivo `.env` (nunca se sube a GitHub) con:
+Create a `.env` file (it is never uploaded to GitHub) with:
 ```
 TELEGRAM_BOT_TOKEN=...
 TELEGRAM_CHAT_ID=...
@@ -75,18 +74,20 @@ python -m vuelos --test-telegram
 ```bash
 python -m vuelos --dry-run
 ```
-`--dry-run` busca de verdad, pero imprime los mensajes en lugar de enviarlos.
+`--dry-run` really searches, but prints the messages instead of sending them.
 
-## Ajustes típicos (`config.yaml`)
-- **Otro destino**: añade una línea en `meetup.destinations` (`city` = código IATA de la ciudad).
-- **Tope de una quedada concreta**: `max_total: 180` en esa línea.
-- **Otros fines de semana** (p. ej. jueves → domingo): añade `[3, 6]` a `weekend_patterns`.
-- **Otra ciudad a la que puedas ir en tren**: añádela a `visit.from_paris_to` (y su nombre en `CITIES`, en `vuelos/models.py`).
-- **Más o menos frecuencia**: cambia el `cron` en `.github/workflows/vuelos.yml`.
+## Common tweaks (`config.yaml`)
+- **Another destination**: add a line to `meetup.destinations` (`city` = the city's IATA code).
+- **Custom limit for one meetup**: `max_total: 180` on that line.
+- **Other weekends** (e.g. Thursday → Sunday): add `[3, 6]` to `weekend_patterns`.
+- **Another city you can reach by train**: add it to `visit.from_paris_to` (and its name to `CITIES` in `vuelos/models.py`).
+- **More or fewer runs**: change the `cron` in `.github/workflows/vuelos.yml`.
 
-## Notas
-- Los precios son por persona, ida y vuelta, en euros, sin equipaje facturado.
-- ✅ = comprobado en tiempo real; ⚠️ = precio de caché (puede haber cambiado).
-- 🔥 aparece cuando hay al menos 5 ejecuciones de historial y el precio está un 25 % por debajo de lo habitual en esa ruta.
-- Un repositorio privado tiene 2.000 minutos gratis de Actions al mes; esto gasta unos 1.000–1.200 (si el repositorio es público, es ilimitado).
-- Si Google cambia su web, `fast-flights` puede dejar de funcionar hasta que lo actualicen. Mientras tanto, SerpApi sigue cubriendo las comprobaciones, y si no se puede consultar nada te llega un aviso por Telegram (como mucho uno al día).
+## Notes
+- Prices are per person, return, in euros, without checked luggage.
+- ✅ = checked live; ⚠️ = cached price (may have changed).
+- 🔥 shows up once there are at least 5 runs of history and the price is 25 % below the usual price on that route.
+- A private repository gets 2,000 free Actions minutes a month; this uses about 1,000–1,200 (public repositories are unlimited).
+- If Google changes its website, `fast-flights` may stop working until it gets updated. Meanwhile SerpApi keeps covering the checks, and if nothing can be fetched you get a Telegram warning (at most once a day).
+
+For a full explanation of how and why it was built this way, see [GUIDE.md](GUIDE.md).

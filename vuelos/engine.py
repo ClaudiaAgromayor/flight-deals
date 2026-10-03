@@ -1,11 +1,11 @@
-"""El cerebro: junta precios de las tres fuentes, comprueba los candidatos y decide qué es chollo.
+"""The brain: gathers prices from the three sources, double-checks candidates and decides what is a deal.
 
-Flujo de una ejecución:
-  1. Radar (Travelpayouts): precios en caché de todas las rutas y meses.
-  2. Escaneo (Google Flights): ruta prioritaria Madrid <-> París, fin de semana a fin de semana.
-  3. Candidatos: lo que pinta por debajo del tope se comprueba en tiempo real
-     (Google Flights; si Google falla, SerpApi).
-  4. Chollos: visitas <= tope y quedadas cuya suma de los dos billetes <= tope.
+One run, step by step:
+  1. Radar (Travelpayouts): cached prices for every route and month.
+  2. Scan (Google Flights): the priority route Madrid <-> Paris, weekend by weekend.
+  3. Candidates: anything that looks below the limit is re-checked live
+     (Google Flights; if Google fails, SerpApi).
+  4. Deals: visits <= limit, and meetups where the two tickets add up to <= limit.
 """
 from datetime import date, timedelta
 
@@ -35,11 +35,11 @@ class Engine:
         self.pairs = weekend_pairs(cfg["weekend_patterns"], cfg["weeks_ahead"])
         self.pair_set = set(self.pairs)
         self.paris = set(cfg["paris_airports"])
-        self.offers = {}      # (origen, destino, salida, vuelta) -> la oferta más fiable/barata
-        self.checked = set()  # claves ya consultadas en tiempo real en esta ejecución
+        self.offers = {}      # (origin, dest, depart, return) -> most reliable / cheapest offer
+        self.checked = set()  # keys already searched live during this run
         self.errors = []
 
-    # ── recogida de precios ─────────────────────────────────────
+    # ── collecting prices ───────────────────────────────────────
 
     def add(self, offers):
         for o in offers:
@@ -55,9 +55,9 @@ class Engine:
         self.log(f"⚠️  {msg}")
 
     def discover(self):
-        """Paso 1: radar de Travelpayouts sobre todas las rutas y meses."""
+        """Step 1: Travelpayouts radar over every route and month."""
         if not self.tp:
-            self.log("· Travelpayouts desactivado (falta TRAVELPAYOUTS_TOKEN)")
+            self.log("· Travelpayouts disabled (TRAVELPAYOUTS_TOKEN missing)")
             return
         routes = {(es, "PAR") for es in self.cfg["visit"]["to_paris_from"]}
         routes |= {("PAR", es) for es in self.cfg["visit"]["from_paris_to"]}
@@ -72,11 +72,11 @@ class Engine:
                 except ProviderError as e:
                     self._fail(str(e))
                     if self.tp.calls > 3 and len(self.errors) >= 3:
-                        return  # token malo o API caída: no insistimos
-        self.log(f"· Travelpayouts: {self.tp.calls} consultas, {len(self.offers)} precios en caché")
+                        return  # bad token or API down: stop insisting
+        self.log(f"· Travelpayouts: {self.tp.calls} requests, {len(self.offers)} cached prices")
 
     def scan_google(self):
-        """Paso 2: Google Flights revisa la ruta prioritaria fin de semana a fin de semana."""
+        """Step 2: Google Flights checks the priority route weekend by weekend."""
         if not self.google_ok:
             return
         v = self.cfg["visit"]
@@ -99,16 +99,16 @@ class Engine:
                             self.google_ok = False
                             self._fail(str(e))
                             return
-        self.log(f"· Google Flights: {self.google.calls} búsquedas de escaneo")
+        self.log(f"· Google Flights: {self.google.calls} scan searches")
 
     def live_search(self, o, d, dep, ret):
-        """Precio en tiempo real. None = no se ha podido comprobar."""
+        """Real-time price. None = could not be checked."""
         if self.google_ok:
             try:
                 return self.google.search(o, d, dep, ret)
             except ProviderError as e:
                 self.google_ok = False
-                self._fail(f"{e} → uso SerpApi como plan B")
+                self._fail(f"{e} → falling back to SerpApi")
         if self.serp and self.serp.available:
             try:
                 return self.serp.search(o, d, dep, ret)
@@ -117,27 +117,27 @@ class Engine:
         return None
 
     def verify(self, o, d, dep, ret):
-        """Paso 3: comprueba un candidato. Devuelve la mejor oferta (verificada si se pudo) o None."""
+        """Step 3: double-check a candidate. Returns the best offer (verified if possible) or None."""
         key = (o, d, dep, ret)
         if key not in self.checked and self.budget > 0:
             self.checked.add(key)
             self.budget -= 1
             live = self.live_search(o, d, dep, ret)
             if live is not None:
-                self.offers.pop(key, None)  # el precio real manda sobre el de caché
+                self.offers.pop(key, None)  # the live price beats the cached one
                 self.add(live)
         return self.offers.get(key)
 
-    # ── decidir chollos ─────────────────────────────────────────
+    # ── deciding deals ──────────────────────────────────────────
 
     def visit_deals(self):
         v = self.cfg["visit"]
         to_paris, from_paris, maxp = set(v["to_paris_from"]), set(v["from_paris_to"]), v["max_price"]
-        # Grupos: tú a París (da igual CDG u ORY) y él a cada ciudad española por separado
+        # Groups: you to Paris (CDG or ORY, either is fine) and him to each Spanish city separately
         groups = {}
         for o in self.offers.values():
             if o.origin in to_paris and o.dest in self.paris:
-                groups.setdefault(("visit_paris", "París"), []).append(o)
+                groups.setdefault(("visit_paris", "Paris"), []).append(o)
             elif o.origin in self.paris and o.dest in from_paris:
                 groups.setdefault(("visit_spain", CITIES.get(o.dest, o.dest)), []).append(o)
 
@@ -145,7 +145,7 @@ class Engine:
         for (kind, city), offers in groups.items():
             hist_key = f"{kind}|{city}"
             record_history(self.state, hist_key, [o.price for o in offers])
-            best = {}  # (salida, vuelta) -> la más barata de ese fin de semana
+            best = {}  # (depart, return) -> cheapest offer for that weekend
             for c in sorted(offers, key=_price):
                 if c.price > maxp * self.tolerance:
                     break
@@ -153,7 +153,7 @@ class Engine:
                 when = (c.depart, c.ret) if c else None
                 if c and c.price <= maxp and (when not in best or c.price < best[when].price):
                     best[when] = c
-            deals += [Deal(kind, f"Visita a {city}", [o], maxp, hist_key) for o in best.values()]
+            deals += [Deal(kind, f"Visit to {city}", [o], maxp, hist_key) for o in best.values()]
         return deals
 
     def _cheapest(self, origins, airports, dep=None, ret=None):
@@ -167,7 +167,7 @@ class Engine:
             return current
         if current:
             return self.verify(*current.route_key)
-        for o in origins:              # no teníamos precio para este lado: lo buscamos
+        for o in origins:              # no price for this side yet: go and look for one
             for d in airports:
                 found = self.verify(o, d, dep, ret)
                 if found:
@@ -191,7 +191,7 @@ class Engine:
                 b = self._cheapest(self.paris, airports, dep, ret)
                 if a and b:
                     sums.append(a.price + b.price)
-                # Si un lado no tiene precio, estimamos con lo más barato visto para ese lado
+                # If one side has no price, estimate it with the cheapest seen for that side
                 est_a = a.price if a else (floor_es.price if floor_es else None)
                 est_b = b.price if b else (floor_fr.price if floor_fr else None)
                 if est_a is not None and est_b is not None and est_a + est_b <= limit * self.tolerance:
@@ -203,7 +203,7 @@ class Engine:
                 a = self._verify_side(es, airports, dep, ret, a)
                 b = self._verify_side(self.paris, airports, dep, ret, b) if a else None
                 if a and b and a.price + b.price <= limit:
-                    deals.append(Deal("meetup", f"Quedada en {dest['name']}", [a, b], limit, hist_key))
+                    deals.append(Deal("meetup", f"Meetup in {dest['name']}", [a, b], limit, hist_key))
         return deals
 
     def run(self):
@@ -214,6 +214,6 @@ class Engine:
         for d in deals:
             usual = usual_price(self.state, d.hist_key)
             d.hot = usual is not None and d.total <= usual * hot
-        self.log(f"· {len(self.offers)} precios en total, {len(deals)} chollos, "
-                 f"{len(self.checked)} comprobaciones en tiempo real")
+        self.log(f"· {len(self.offers)} prices in total, {len(deals)} deals, "
+                 f"{len(self.checked)} live checks")
         return sorted(deals, key=lambda d: (not d.hot, d.total / d.limit))

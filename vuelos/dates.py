@@ -1,11 +1,11 @@
 from datetime import date, timedelta
 
-DIAS = ["lun", "mar", "mié", "jue", "vie", "sáb", "dom"]
-MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"]
+DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
 
 def weekend_pairs(patterns, weeks_ahead, today=None):
-    """Todas las parejas (salida, vuelta) que encajan con los patrones, p. ej. vie->lun."""
+    """Every (depart, return) pair matching the patterns, e.g. Fri->Mon."""
     today = today or date.today()
     end = today + timedelta(weeks=weeks_ahead)
     pairs = []
@@ -20,4 +20,4 @@ def weekend_pairs(patterns, weeks_ahead, today=None):
 
 
 def fmt(d: date) -> str:
-    return f"{DIAS[d.weekday()]} {d.day} {MESES[d.month - 1]}"
+    return f"{DAYS[d.weekday()]} {d.day} {MONTHS[d.month - 1]}"

@@ -16,12 +16,12 @@ CITIES = {"MAD": "Madrid", "VLC": "Valencia", "ZAZ": "Zaragoza", "BCN": "Barcelo
 
 
 class ProviderError(Exception):
-    """La fuente no responde o nos ha bloqueado (distinto de "no hay vuelos")."""
+    """The source is down or has blocked us (not the same as "no flights")."""
 
 
 @dataclass
 class Offer:
-    """Un vuelo directo de ida y vuelta, precio por persona en EUR."""
+    """A direct return flight, price per person in EUR."""
 
     origin: str
     dest: str
@@ -31,7 +31,7 @@ class Offer:
     airlines: list[str]
     source: str          # google | serpapi | travelpayouts
     link: str
-    verified: bool       # True = precio en tiempo real; False = precio en caché
+    verified: bool       # True = live price; False = cached price
     depart_time: str | None = None
 
     @property
@@ -49,7 +49,7 @@ class Deal:
     title: str
     legs: list[Offer]
     limit: float
-    hist_key: str        # con qué historial se compara para decidir si es 🔥
+    hist_key: str        # which history it is compared with to decide if it is 🔥
     hot: bool = False
 
     @property
@@ -66,5 +66,5 @@ class Deal:
 
     @property
     def key(self) -> str:
-        # Mismo viaje = mismo tipo, destino y fechas (aunque cambie el aeropuerto)
+        # Same trip = same kind, destination and dates (even if the airport changes)
         return f"{self.kind}|{self.title}|{self.depart}|{self.ret}"

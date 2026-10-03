@@ -21,7 +21,7 @@ def save_state(state):
 
 
 def record_history(state, key, prices):
-    """Guarda el precio mediano de esta ejecución para saber qué es "lo normal"."""
+    """Store this run's median price so we know what "usual" looks like."""
     if not prices:
         return
     hist = state.setdefault("history", {}).setdefault(key, [])
@@ -37,7 +37,7 @@ def usual_price(state, key, min_samples=5):
 
 
 def select_new(deals, state, realert_drop):
-    """Descarta lo que ya te hemos avisado, salvo que haya bajado bastante más."""
+    """Drop what we already alerted about, unless it has dropped noticeably further."""
     alerted = state.setdefault("alerted", {})
     today = date.today().isoformat()
     for k in [k for k, v in alerted.items() if v["depart"] < today]:

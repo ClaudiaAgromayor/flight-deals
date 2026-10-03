@@ -1,4 +1,4 @@
-"""SerpApi (Google Flights por API oficial de pago): plan B cuando Google nos bloquea."""
+"""SerpApi (Google Flights through a paid API): plan B when Google blocks us."""
 from datetime import date
 
 import requests
@@ -13,7 +13,7 @@ class SerpApi:
         self.key = api_key
         self.limit = cfg.get("monthly_limit", 200)
         self.banned = set(banned)
-        # Contador de búsquedas del mes, guardado en state.json para no pasarnos del plan gratis
+        # This month's search counter, stored in state.json so we stay within the free plan
         month = date.today().strftime("%Y-%m")
         self.usage = state.setdefault("serpapi", {})
         if self.usage.get("month") != month:
@@ -26,7 +26,7 @@ class SerpApi:
 
     def search(self, origin, dest, depart, ret):
         if not self.available:
-            raise ProviderError("SerpApi sin clave o sin búsquedas libres este mes")
+            raise ProviderError("SerpApi has no key or no free searches left this month")
         params = {
             "engine": "google_flights", "departure_id": origin, "arrival_id": dest,
             "outbound_date": depart.isoformat(), "return_date": ret.isoformat(),
@@ -37,7 +37,7 @@ class SerpApi:
         try:
             data = requests.get(API, params=params, timeout=60).json()
         except Exception as e:
-            raise ProviderError(f"SerpApi no responde ({e})") from e
+            raise ProviderError(f"SerpApi not responding ({e})") from e
         if "error" in data:
             if "returned any results" in data["error"]:
                 return []

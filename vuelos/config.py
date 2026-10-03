@@ -8,7 +8,7 @@ SECRET_NAMES = ("TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID", "TRAVELPAYOUTS_TOKEN",
 
 
 def load_dotenv(path=ROOT / ".env"):
-    """Para ejecutar en local: lee claves de un .env (en GitHub vienen de los Secrets)."""
+    """For local runs: read keys from a .env file (on GitHub they come from Secrets)."""
     if not path.exists():
         return
     for line in path.read_text(encoding="utf-8").splitlines():

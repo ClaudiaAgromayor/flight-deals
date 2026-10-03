@@ -1,75 +1,75 @@
 # ─────────────────────────────────────────────────────────────
-#  Configuración del buscador de chollos. Edita aquí y haz commit.
-#  Todos los precios son IDA Y VUELTA, POR PERSONA, en euros.
+#  Flight deal finder settings. Edit here and commit.
+#  All prices are RETURN, PER PERSON, in euros.
 # ─────────────────────────────────────────────────────────────
 
-# Cuántas semanas hacia delante mirar
+# How many weeks ahead to look
 weeks_ahead: 16
 
-# Fines de semana que buscamos: [día de salida, día de vuelta]
-# 0=lunes 1=martes 2=miércoles 3=jueves 4=viernes 5=sábado 6=domingo
+# Weekends we search: [departure day, return day]
+# 0=Monday 1=Tuesday 2=Wednesday 3=Thursday 4=Friday 5=Saturday 6=Sunday
 weekend_patterns:
-  - [4, 6]   # viernes -> domingo
-  - [4, 0]   # viernes -> lunes
-  - [5, 6]   # sábado  -> domingo
-  - [5, 0]   # sábado  -> lunes
+  - [4, 6]   # Friday   -> Sunday
+  - [4, 0]   # Friday   -> Monday
+  - [5, 6]   # Saturday -> Sunday
+  - [5, 0]   # Saturday -> Monday
 
-# Aeropuertos prohibidos en CUALQUIER ruta (ni salir ni llegar)
-#   BVA = París-Beauvais, XCR = París-Vatry (los dos lejísimos de París)
+# Airports banned on ANY route (neither departing nor landing)
+#   BVA = Paris-Beauvais, XCR = Paris-Vatry (both very far from Paris)
 banned_airports: [BVA, XCR]
 
-# Aeropuertos de París que sí valen
+# Paris airports that are fine
 paris_airports: [CDG, ORY]
 
-# ── Visitas entre España y París ──
+# ── Visits between Spain and Paris ──
 visit:
-  max_price: 150                     # tope por persona, ida y vuelta
-  # Tú vas a París: solo desde Madrid
+  max_price: 150                     # limit per person, return
+  # You go to Paris: only from Madrid
   to_paris_from: [MAD]
-  # Él viene desde París: a Madrid, o a ciudades a las que tú llegas en tren
+  # He comes from Paris: to Madrid, or to cities you can reach by train
   from_paris_to: [MAD, VLC, ZAZ, BCN]   # Madrid, Valencia, Zaragoza, Barcelona
-  # Rutas que Google Flights revisa SIEMPRE, fin de semana a fin de semana
-  # (además de lo que encuentre el radar de Travelpayouts)
+  # Routes Google Flights ALWAYS checks, weekend by weekend
+  # (on top of whatever the Travelpayouts radar finds)
   google_scan_airports: [MAD]
   google_weeks_ahead: 8
 
-# ── Quedadas: los dos volamos a un tercer sitio ──
+# ── Meetups: both of you fly somewhere else ──
 meetup:
-  spain_airports: [MAD]              # desde dónde sales tú
-  # Máximo para la SUMA de los dos billetes (el tuyo + el suyo)
+  spain_airports: [MAD]              # where you fly from
+  # Limit for the SUM of both tickets (yours + his)
   default_max_total: 200
   destinations:
-    - { name: Marsella,  city: MRS, airports: [MRS] }
-    - { name: Ámsterdam, city: AMS, airports: [AMS] }
-    - { name: Niza,      city: NCE, airports: [NCE] }
-    - { name: Lisboa,    city: LIS, airports: [LIS] }
-    - { name: Oporto,    city: OPO, airports: [OPO] }
+    - { name: Marseille, city: MRS, airports: [MRS] }
+    - { name: Amsterdam, city: AMS, airports: [AMS] }
+    - { name: Nice,      city: NCE, airports: [NCE] }
+    - { name: Lisbon,    city: LIS, airports: [LIS] }
+    - { name: Porto,     city: OPO, airports: [OPO] }
     - { name: Bilbao,    city: BIO, airports: [BIO] }
-    - { name: Roma,      city: ROM, airports: [FCO, CIA] }
-    - { name: Milán,     city: MIL, airports: [MXP, LIN, BGY] }
-    - { name: Nápoles,   city: NAP, airports: [NAP] }
-    - { name: Venecia,   city: VCE, airports: [VCE, TSF] }
-    - { name: Florencia, city: FLR, airports: [FLR] }
-    - { name: Bolonia,   city: BLQ, airports: [BLQ] }
-    - { name: Bruselas,  city: BRU, airports: [BRU] }   # sin Charleroi (CRL)
-    # Ejemplo de tope propio para un destino:
-    # - { name: Londres, city: LON, airports: [LHR, LGW], max_total: 180 }
+    - { name: Rome,      city: ROM, airports: [FCO, CIA] }
+    - { name: Milan,     city: MIL, airports: [MXP, LIN, BGY] }
+    - { name: Naples,    city: NAP, airports: [NAP] }
+    - { name: Venice,    city: VCE, airports: [VCE, TSF] }
+    - { name: Florence,  city: FLR, airports: [FLR] }
+    - { name: Bologna,   city: BLQ, airports: [BLQ] }
+    - { name: Brussels,  city: BRU, airports: [BRU] }   # no Charleroi (CRL)
+    # Example of a custom limit for one destination:
+    # - { name: London, city: LON, airports: [LHR, LGW], max_total: 180 }
 
-# ── Fuentes de precios ──
+# ── Price sources ──
 providers:
-  travelpayouts:            # radar: barre todo, gratis, precios en caché
+  travelpayouts:            # radar: covers everything, free, cached prices
     enabled: true
-    tolerance: 0.15         # revisa en Google precios hasta un 15 % por encima del tope
-  google:                   # Google Flights (fast-flights): precio real, gratis
+    tolerance: 0.15         # re-check on Google prices up to 15 % above the limit
+  google:                   # Google Flights (fast-flights): live prices, free
     enabled: true
-    delay_seconds: 2.5      # pausa entre búsquedas para no molestar a Google
-    max_verifications: 40   # comprobaciones de candidatos por ejecución
-  serpapi:                  # plan B si Google nos bloquea
+    delay_seconds: 2.5      # pause between searches so we don't bother Google
+    max_verifications: 40   # candidate checks per run
+  serpapi:                  # plan B if Google blocks us
     enabled: true
-    monthly_limit: 200      # el plan gratuito da ~250/mes; dejamos margen
+    monthly_limit: 200      # the free plan gives ~250/month; we keep a margin
 
-# ── Avisos ──
+# ── Alerts ──
 alerts:
-  realert_drop: 0.10        # vuelve a avisar del mismo viaje si baja otro 10 %
-  hot_vs_median: 0.75       # 🔥 si está un 25 % por debajo de lo habitual
+  realert_drop: 0.10        # alert again about the same trip if it drops another 10 %
+  hot_vs_median: 0.75       # 🔥 if it is 25 % below the usual price
   max_per_message: 15

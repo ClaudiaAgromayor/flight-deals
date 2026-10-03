@@ -1,20 +1,20 @@
-name: Buscar chollos de vuelos
+name: Find flight deals
 
 on:
   schedule:
-    # 4 veces al día. Hora UTC (en Madrid suma 1 h en invierno, 2 h en verano)
+    # 4 times a day. UTC time (Madrid is +1 h in winter, +2 h in summer)
     - cron: "23 5,10,15,20 * * *"
-  workflow_dispatch: {}   # botón "Run workflow" para lanzarlo a mano
+  workflow_dispatch: {}   # "Run workflow" button to start it by hand
 
 permissions:
-  contents: write         # para guardar data/state.json (historial y avisos enviados)
+  contents: write         # to save data/state.json (price history and sent alerts)
 
 concurrency:
   group: vuelos
   cancel-in-progress: false
 
 jobs:
-  buscar:
+  search:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -27,7 +27,7 @@ jobs:
 
       - run: pip install -r requirements.txt
 
-      - name: Buscar vuelos y avisar
+      - name: Search flights and send alerts
         run: python -m vuelos
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -35,9 +35,9 @@ jobs:
           TRAVELPAYOUTS_TOKEN: ${{ secrets.TRAVELPAYOUTS_TOKEN }}
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
 
-      - name: Guardar historial de precios
+      - name: Save price history
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/state.json
-          git diff --cached --quiet || (git commit -m "Actualizar historial de precios" && git push)
+          git diff --cached --quiet || (git commit -m "Update price history" && git push)

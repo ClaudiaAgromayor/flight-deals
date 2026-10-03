@@ -1,4 +1,4 @@
-"""Google Flights vía fast-flights: precio real y gratis, pero es scraping."""
+"""Google Flights via fast-flights: live prices and free, but it is scraping."""
 import time
 
 from fast_flights import FlightQuery, Passengers, create_query
@@ -9,8 +9,8 @@ from primp import Client
 from ..models import Offer, ProviderError
 
 URL = "https://www.google.com/travel/flights"
-# Desde IPs europeas Google enseña antes la pantalla de cookies ("Antes de continuar");
-# con esta cookie la damos por aceptada y llegamos directamente a los resultados.
+# From European IPs Google first shows the cookie screen ("Before you continue");
+# this cookie marks it as accepted so we land straight on the results.
 CONSENT_COOKIE = "SOCS=CAESEwgDEgk0ODE3Nzk3MjQaAmVuIAEaBgiA_LyaBg; CONSENT=YES+"
 
 
@@ -40,7 +40,7 @@ class GoogleFlights:
         try:
             html = self.client.get(URL, params=query.params(), headers={"Cookie": CONSENT_COOKIE}).text
         except Exception as e:
-            raise ProviderError(f"Google Flights no responde ({e})") from e
+            raise ProviderError(f"Google Flights not responding ({e})") from e
         finally:
             self._last = time.monotonic()
             self.calls += 1
@@ -50,12 +50,12 @@ class GoogleFlights:
         except FlightsNotFound:
             return []
         except Exception as e:
-            # Página de bloqueo/captcha o Google ha cambiado su web
-            raise ProviderError(f"Google Flights ha devuelto algo inesperado ({type(e).__name__})") from e
+            # Block/captcha page, or Google changed its website
+            raise ProviderError(f"Google Flights returned something unexpected ({type(e).__name__})") from e
 
         offers = []
         for r in results:
-            if not r.price or len(r.flights) != 1:   # solo directos
+            if not r.price or len(r.flights) != 1:   # direct flights only
                 continue
             seg = r.flights[0]
             o, d = seg.from_airport.code, seg.to_airport.code

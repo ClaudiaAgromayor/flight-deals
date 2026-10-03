@@ -1,5 +1,5 @@
-"""Travelpayouts / Aviasales Data API: el "radar". Gratis y barre meses enteros,
-pero son precios que otros usuarios han visto hace poco (caché), no en tiempo real."""
+"""Travelpayouts / Aviasales Data API: the "radar". Free and covers whole months at once,
+but these are prices other users saw recently (cache), not live prices."""
 from datetime import date
 
 import requests
@@ -16,7 +16,7 @@ class Travelpayouts:
         self.calls = 0
 
     def month_offers(self, origin, dest, month):
-        """Vuelos directos de ida y vuelta saliendo en `month` (YYYY-MM). origin/dest pueden ser ciudad (PAR)."""
+        """Direct return flights departing in `month` (YYYY-MM). origin/dest may be a city code (PAR)."""
         params = {
             "origin": origin, "destination": dest, "departure_at": month,
             "one_way": "false", "direct": "true", "currency": "eur",
@@ -27,7 +27,7 @@ class Travelpayouts:
             r = requests.get(API, params=params, headers={"X-Access-Token": self.token}, timeout=30)
             data = r.json()
         except Exception as e:
-            raise ProviderError(f"Travelpayouts no responde ({e})") from e
+            raise ProviderError(f"Travelpayouts not responding ({e})") from e
         if r.status_code != 200 or not data.get("success", False):
             raise ProviderError(f"Travelpayouts: {data.get('error') or r.status_code}")
 

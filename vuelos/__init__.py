@@ -1,1 +1,1 @@
-"""Buscador de chollos de vuelos Madrid <-> París (y quedadas) con avisos por Telegram."""
+"""Cheap flight deal finder Madrid <-> Paris (plus meetups elsewhere) with Telegram alerts."""
