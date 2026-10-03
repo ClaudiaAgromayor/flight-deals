@@ -1,1 +1,148 @@
-{}
+{
+ "alerted": {
+  "visit_paris|Visit to Paris|2026-11-21|2026-11-22": {
+   "depart": "2026-11-21",
+   "price": 132.0
+  },
+  "visit_paris|Visit to Paris|2026-11-21|2026-11-23": {
+   "depart": "2026-11-21",
+   "price": 121.0
+  },
+  "visit_paris|Visit to Paris|2026-11-27|2026-11-30": {
+   "depart": "2026-11-27",
+   "price": 141.0
+  },
+  "visit_paris|Visit to Paris|2026-11-28|2026-11-29": {
+   "depart": "2026-11-28",
+   "price": 132.0
+  },
+  "visit_paris|Visit to Paris|2026-11-28|2026-11-30": {
+   "depart": "2026-11-28",
+   "price": 135.0
+  },
+  "visit_paris|Visit to Paris|2026-12-11|2026-12-13": {
+   "depart": "2026-12-11",
+   "price": 130.0
+  },
+  "visit_spain|Visit to Barcelona|2026-11-20|2026-11-22": {
+   "depart": "2026-11-20",
+   "price": 114.0
+  },
+  "visit_spain|Visit to Madrid|2026-11-13|2026-11-15": {
+   "depart": "2026-11-13",
+   "price": 141.0
+  },
+  "visit_spain|Visit to Madrid|2026-11-14|2026-11-15": {
+   "depart": "2026-11-14",
+   "price": 141.0
+  },
+  "visit_spain|Visit to Madrid|2026-11-14|2026-11-16": {
+   "depart": "2026-11-14",
+   "price": 137.0
+  },
+  "visit_spain|Visit to Madrid|2026-11-21|2026-11-23": {
+   "depart": "2026-11-21",
+   "price": 130.0
+  },
+  "visit_spain|Visit to Madrid|2026-11-27|2026-11-30": {
+   "depart": "2026-11-27",
+   "price": 133.0
+  },
+  "visit_spain|Visit to Madrid|2026-11-28|2026-11-30": {
+   "depart": "2026-11-28",
+   "price": 132.0
+  },
+  "visit_spain|Visit to Madrid|2027-01-15|2027-01-18": {
+   "depart": "2027-01-15",
+   "price": 130.0
+  },
+  "visit_spain|Visit to Madrid|2027-01-22|2027-01-25": {
+   "depart": "2027-01-22",
+   "price": 104.0
+  }
+ },
+ "history": {
+  "meetup|Amsterdam": [
+   [
+    "2026-10-03",
+    564.0
+   ]
+  ],
+  "meetup|Bilbao": [
+   [
+    "2026-10-03",
+    190.0
+   ]
+  ],
+  "meetup|Brussels": [
+   [
+    "2026-10-03",
+    645.0
+   ]
+  ],
+  "meetup|Lisbon": [
+   [
+    "2026-10-03",
+    431.0
+   ]
+  ],
+  "meetup|Marseille": [
+   [
+    "2026-10-03",
+    423.0
+   ]
+  ],
+  "meetup|Milan": [
+   [
+    "2026-10-03",
+    312.5
+   ]
+  ],
+  "meetup|Nice": [
+   [
+    "2026-10-03",
+    407.0
+   ]
+  ],
+  "meetup|Porto": [
+   [
+    "2026-10-03",
+    422.0
+   ]
+  ],
+  "meetup|Rome": [
+   [
+    "2026-10-03",
+    462.0
+   ]
+  ],
+  "visit_paris|Paris": [
+   [
+    "2026-10-03",
+    248.5
+   ]
+  ],
+  "visit_spain|Barcelona": [
+   [
+    "2026-10-03",
+    174.0
+   ]
+  ],
+  "visit_spain|Madrid": [
+   [
+    "2026-10-03",
+    222.5
+   ]
+  ],
+  "visit_spain|Valencia": [
+   [
+    "2026-10-03",
+    159.0
+   ]
+  ]
+ },
+ "serpapi": {
+  "month": "2026-10",
+  "used": 0
+ }
+}
