@@ -64,7 +64,8 @@ class Engine:
         routes |= {("PAR", es) for es in self.cfg["visit"]["from_paris_to"]}
         for dest in self.cfg["meetup"]["destinations"]:
             routes |= {(es, dest["city"]) for es in self.cfg["meetup"]["spain_airports"]}
-            routes.add(("PAR", dest["city"]))
+            if not dest.get("paris_by_train"):
+                routes.add(("PAR", dest["city"]))
         months = sorted({d.strftime("%Y-%m") for d, _ in self.pairs})
         for o, d in sorted(routes):
             for m in months:
@@ -181,6 +182,9 @@ class Engine:
         deals = []
         for dest in m["destinations"]:
             airports = set(dest["airports"])
+            if dest.get("paris_by_train"):
+                deals += self._train_meetup_deals(dest, es, airports)
+                continue
             limit = dest.get("max_total", m["default_max_total"])
             floor_es = self._cheapest(es, airports)
             floor_fr = self._cheapest(self.paris, airports)
@@ -205,6 +209,22 @@ class Engine:
                 b = self._verify_side(self.paris, airports, dep, ret, b) if a else None
                 if a and b and a.price + b.price <= limit:
                     deals.append(Deal("meetup", f"Meetup in {dest['name']}", [a, b], limit, hist_key))
+        return deals
+
+    def _train_meetup_deals(self, dest, es, airports):
+        """Meetup where only the Madrid side flies (Paris side takes the train): one ticket, its own limit."""
+        limit = dest["max_price"]
+        hist_key = f"meetup_train|{dest['name']}"
+        record_history(self.state, hist_key,
+                       [o.price for o in self.offers.values() if o.origin in es and o.dest in airports])
+        deals = []
+        for dep, ret in self.pairs:
+            a = self._cheapest(es, airports, dep, ret)
+            if not a or a.price > limit * self.tolerance:
+                continue
+            a = self._verify_side(es, airports, dep, ret, a)
+            if a and a.price <= limit:
+                deals.append(Deal("meetup_train", f"Meetup in {dest['name']}", [a], limit, hist_key))
         return deals
 
     def run(self):

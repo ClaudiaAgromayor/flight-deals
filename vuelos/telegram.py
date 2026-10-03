@@ -51,6 +51,10 @@ def format_deal(d, people):
         return (f"{fire}💑 <b>Rendez-vous {_a(city)}</b> · <b>{d.total:.0f} €</b> à deux\n{when}\n"
                 f"• {_leg(a, f'{clau} vole depuis Madrid')}\n"
                 f"• {_leg(b, f'{titou} vole depuis Paris')}")
+    if d.kind == "meetup_train":
+        return (f"{fire}💑 <b>Rendez-vous {_a(city)}</b> · <b>{d.total:.0f} €</b> A/R\n{when}\n"
+                f"{clau} vole depuis Madrid : {_leg(d.legs[0])}\n"
+                f"{titou} prend le train depuis Paris")
     if d.kind == "visit_paris":
         return (f"{fire}🗼 <b>{clau} va à Paris</b> · <b>{d.total:.0f} €</b> A/R\n{when}\n"
                 f"{_leg(d.legs[0])}")

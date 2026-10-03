@@ -52,7 +52,8 @@ meetup:
   default_max_total: 200
   destinations:
     - { name: Marseille, city: MRS, airports: [MRS] }
-    - { name: Amsterdam, city: AMS, airports: [AMS] }
+    # paris_by_train: Titou takes the train, so only the Madrid flight is watched (max_price = that ticket)
+    - { name: Amsterdam, city: AMS, airports: [AMS], paris_by_train: true, max_price: 220 }
     - { name: Nice,      city: NCE, airports: [NCE] }
     - { name: Lisbon,    city: LIS, airports: [LIS] }
     - { name: Porto,     city: OPO, airports: [OPO] }
