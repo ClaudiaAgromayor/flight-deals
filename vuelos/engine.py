@@ -185,7 +185,11 @@ class Engine:
             if dest.get("paris_by_train"):
                 deals += self._train_meetup_deals(dest, es, airports)
                 continue
-            limit = dest.get("max_total", m["default_max_total"])
+            # Optional limit per ticket; if both are set they replace the default total limit
+            max_a = dest.get("max_madrid", float("inf"))
+            max_b = dest.get("max_paris", float("inf"))
+            per_side = "max_madrid" in dest and "max_paris" in dest
+            limit = dest.get("max_total", max_a + max_b if per_side else m["default_max_total"])
             floor_es = self._cheapest(es, airports)
             floor_fr = self._cheapest(self.paris, airports)
             if not floor_es and not floor_fr:
@@ -199,7 +203,8 @@ class Engine:
                 # If one side has no price, estimate it with the cheapest seen for that side
                 est_a = a.price if a else (floor_es.price if floor_es else None)
                 est_b = b.price if b else (floor_fr.price if floor_fr else None)
-                if est_a is not None and est_b is not None and est_a + est_b <= limit * self.tolerance:
+                if (est_a is not None and est_b is not None and est_a + est_b <= limit * self.tolerance
+                        and est_a <= max_a * self.tolerance and est_b <= max_b * self.tolerance):
                     candidates.append((est_a + est_b, dep, ret, a, b))
             hist_key = f"meetup|{dest['name']}"
             record_history(self.state, hist_key, sums)
@@ -207,7 +212,7 @@ class Engine:
             for _, dep, ret, a, b in sorted(candidates, key=lambda c: c[0]):
                 a = self._verify_side(es, airports, dep, ret, a)
                 b = self._verify_side(self.paris, airports, dep, ret, b) if a else None
-                if a and b and a.price + b.price <= limit:
+                if a and b and a.price + b.price <= limit and a.price <= max_a and b.price <= max_b:
                     deals.append(Deal("meetup", f"Meetup in {dest['name']}", [a, b], limit, hist_key))
         return deals
 

@@ -10,9 +10,9 @@ There are two of us: Clau lives in Madrid and Titou lives in Paris. The program 
 
 **Clau visits Paris.** A return flight from Madrid to Paris, for €150 or less.
 
-**Titou visits Spain.** A return flight from Paris to Madrid, for €150 or less. It also checks flights from Paris to Valencia, Zaragoza and Barcelona, because Clau can easily take the train to meet him there.
+**Titou visits Spain.** A return flight from Paris to Madrid, for €150 or less. It also checks flights from Paris to Valencia and Zaragoza, because Clau can easily take the train to meet him there.
 
-**We meet somewhere else.** Both of us fly to the same city on the same weekend, and the two tickets together cost €200 or less. It checks places like Lisbon, Porto, Rome, Milan, Nice, Marseille and Bilbao. For Amsterdam it works a bit differently: Titou goes by train, so it only watches the flight from Madrid, up to €220.
+**We meet somewhere else.** Both of us fly to the same city on the same weekend, and the two tickets together cost €200 or less. It checks places like Lisbon, Porto, Rome, Milan, Nice and Bilbao. A couple of cities have their own rules: for Marseille, each ticket has to be €120 or less (from Madrid and from Paris). For Amsterdam, Titou goes by train, so it only watches the flight from Madrid, up to €220.
 
 All prices are per person, for a return trip, without checked luggage.
 
@@ -64,7 +64,7 @@ Some common changes:
 - **Block a weekend.** Add a line to `blocked_dates`, for example:
   `- { from: 2026-12-04, to: 2026-12-06, who: Clau }`
 - **Change the price limit for visits.** Edit `max_price` under `visit`.
-- **Add a meetup city.** Add a line to `meetup.destinations` with the city name, its airport code, and optionally its own price limit (`max_total`).
+- **Add a meetup city.** Add a line to `meetup.destinations` with the city name, its airport code, and optionally its own price limit: `max_total` for both tickets together, or `max_madrid` and `max_paris` for each ticket separately (like Marseille).
 - **A city where Titou goes by train.** Add `paris_by_train: true, max_price: 200` to that city's line, like Amsterdam.
 - **Another Spanish city Clau can reach by train.** Add its airport code to `from_paris_to` (and its name to `CITIES` in `vuelos/models.py`).
 - **Other days of the week.** Edit `weekend_patterns`. Days are numbered from 0 (Monday) to 6 (Sunday).

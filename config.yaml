@@ -39,7 +39,7 @@ visit:
   # You go to Paris: only from Madrid
   to_paris_from: [MAD]
   # He comes from Paris: to Madrid, or to cities you can reach by train
-  from_paris_to: [MAD, VLC, ZAZ, BCN]   # Madrid, Valencia, Zaragoza, Barcelona
+  from_paris_to: [MAD, VLC, ZAZ]   # Madrid, Valencia, Zaragoza
   # Routes Google Flights ALWAYS checks, weekend by weekend
   # (on top of whatever the Travelpayouts radar finds)
   google_scan_airports: [MAD]
@@ -48,10 +48,11 @@ visit:
 # ── Meetups: both of you fly somewhere else ──
 meetup:
   spain_airports: [MAD]              # where you fly from
-  # Limit for the SUM of both tickets (yours + his)
+  # Limit for the SUM of both tickets (yours + his).
+  # A destination can instead set a limit per ticket: max_madrid / max_paris
   default_max_total: 200
   destinations:
-    - { name: Marseille, city: MRS, airports: [MRS] }
+    - { name: Marseille, city: MRS, airports: [MRS], max_madrid: 120, max_paris: 120 }
     # paris_by_train: Titou takes the train, so only the Madrid flight is watched (max_price = that ticket)
     - { name: Amsterdam, city: AMS, airports: [AMS], paris_by_train: true, max_price: 220 }
     - { name: Nice,      city: NCE, airports: [NCE] }
