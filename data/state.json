@@ -1,9 +1,5 @@
 {
  "alerted": {
-  "meetup_train|Meetup in Amsterdam|2026-11-13|2026-11-15": {
-   "depart": "2026-11-13",
-   "price": 189.0
-  },
   "meetup_train|Meetup in Amsterdam|2026-11-14|2026-11-15": {
    "depart": "2026-11-14",
    "price": 179.0
@@ -60,10 +56,6 @@
    "depart": "2027-02-13",
    "price": 218.0
   },
-  "meetup|Meetup in Bilbao|2026-11-13|2026-11-16": {
-   "depart": "2026-11-13",
-   "price": 171.0
-  },
   "meetup|Meetup in Bilbao|2026-11-14|2026-11-15": {
    "depart": "2026-11-14",
    "price": 187.0
@@ -108,10 +100,6 @@
    "depart": "2027-01-29",
    "price": 172.0
   },
-  "meetup|Meetup in Milan|2026-11-13|2026-11-15": {
-   "depart": "2026-11-13",
-   "price": 181.0
-  },
   "meetup|Meetup in Milan|2026-11-20|2026-11-22": {
    "depart": "2026-11-20",
    "price": 116.0
@@ -127,14 +115,6 @@
   "meetup|Meetup in Milan|2026-11-27|2026-11-30": {
    "depart": "2026-11-27",
    "price": 124.0
-  },
-  "meetup|Meetup in Nice|2026-11-13|2026-11-15": {
-   "depart": "2026-11-13",
-   "price": 179.0
-  },
-  "meetup|Meetup in Nice|2026-11-13|2026-11-16": {
-   "depart": "2026-11-13",
-   "price": 143.0
   },
   "meetup|Meetup in Nice|2026-11-20|2026-11-22": {
    "depart": "2026-11-20",
@@ -224,14 +204,6 @@
    "depart": "2026-11-20",
    "price": 186.0
   },
-  "visit_paris|Visit to Paris|2026-11-13|2026-11-15": {
-   "depart": "2026-11-13",
-   "price": 127.0
-  },
-  "visit_paris|Visit to Paris|2026-11-13|2026-11-16": {
-   "depart": "2026-11-13",
-   "price": 125.0
-  },
   "visit_paris|Visit to Paris|2026-11-14|2026-11-15": {
    "depart": "2026-11-14",
    "price": 120.0
@@ -320,6 +292,14 @@
    "depart": "2027-01-08",
    "price": 141.0
   },
+  "visit_paris|Visit to Paris|2027-01-08|2027-01-11": {
+   "depart": "2027-01-08",
+   "price": 130.0
+  },
+  "visit_paris|Visit to Paris|2027-01-09|2027-01-11": {
+   "depart": "2027-01-09",
+   "price": 121.0
+  },
   "visit_paris|Visit to Paris|2027-01-15|2027-01-18": {
    "depart": "2027-01-15",
    "price": 135.0
@@ -331,14 +311,6 @@
   "visit_spain|Visit to Barcelona|2026-11-20|2026-11-22": {
    "depart": "2026-11-20",
    "price": 114.0
-  },
-  "visit_spain|Visit to Madrid|2026-11-13|2026-11-15": {
-   "depart": "2026-11-13",
-   "price": 141.0
-  },
-  "visit_spain|Visit to Madrid|2026-11-13|2026-11-16": {
-   "depart": "2026-11-13",
-   "price": 135.0
   },
   "visit_spain|Visit to Madrid|2026-11-14|2026-11-15": {
    "depart": "2026-11-14",
@@ -426,11 +398,15 @@
   },
   "visit_spain|Visit to Madrid|2027-01-08|2027-01-10": {
    "depart": "2027-01-08",
-   "price": 147.0
+   "price": 119.0
   },
   "visit_spain|Visit to Madrid|2027-01-08|2027-01-11": {
    "depart": "2027-01-08",
    "price": 132.0
+  },
+  "visit_spain|Visit to Madrid|2027-01-09|2027-01-11": {
+   "depart": "2027-01-09",
+   "price": 143.0
   },
   "visit_spain|Visit to Madrid|2027-01-15|2027-01-18": {
    "depart": "2027-01-15",
@@ -930,6 +906,10 @@
    [
     "2026-11-13",
     278.0
+   ],
+   [
+    "2026-11-14",
+    273.5
    ]
   ],
   "meetup|Amsterdam": [
@@ -1110,6 +1090,10 @@
    [
     "2026-11-13",
     368.0
+   ],
+   [
+    "2026-11-14",
+    305.0
    ]
   ],
   "meetup|Lisbon": [
@@ -1432,6 +1416,10 @@
    [
     "2026-11-13",
     327.5
+   ],
+   [
+    "2026-11-14",
+    273.0
    ]
   ],
   "meetup|Marseille": [
@@ -1660,6 +1648,10 @@
    [
     "2026-11-13",
     156.5
+   ],
+   [
+    "2026-11-14",
+    149.5
    ]
   ],
   "meetup|Nice": [
@@ -2086,6 +2078,10 @@
    [
     "2026-11-13",
     241.0
+   ],
+   [
+    "2026-11-14",
+    251.0
    ]
   ],
   "meetup|Porto": [
@@ -2834,6 +2830,10 @@
    [
     "2026-11-13",
     175.0
+   ],
+   [
+    "2026-11-14",
+    186.0
    ]
   ],
   "visit_spain|Barcelona": [
@@ -3302,6 +3302,10 @@
    [
     "2026-11-13",
     186.5
+   ],
+   [
+    "2026-11-14",
+    186.0
    ]
   ],
   "visit_spain|Valencia": [
@@ -3764,6 +3768,10 @@
    [
     "2026-11-13",
     147.5
+   ],
+   [
+    "2026-11-14",
+    129.0
    ]
   ]
  },
